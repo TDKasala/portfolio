@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portfolio of Joseph Kabeya — projects, skills, and contact." />
+  <title>Joseph Kabeya — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="#top" class="brand">JK<span>.</span></a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero container">
+      <p class="eyebrow">Hello, I'm</p>
+      <h1 class="hero-title">Joseph Kabeya</h1>
+      <p class="hero-subtitle">Software Developer &amp; Builder of useful things.</p>
+      <p class="hero-text">
+        I design and build web applications, tools, and experiments. Below is a
+        selection of projects I've worked on — from full-stack apps to small
+        utilities.
+      </p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="section container">
+      <div class="section-head">
+        <h2>Projects</h2>
+        <p>A collection of things I've built and shipped.</p>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="web">Web</button>
+        <button class="filter" data-filter="mobile">Mobile</button>
+        <button class="filter" data-filter="tool">Tools</button>
+      </div>
+
+      <div class="projects-grid" id="projects-grid">
+        <!-- Cards injected by script.js -->
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section container about">
+      <div class="section-head">
+        <h2>About</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I'm a developer who enjoys turning ideas into working products. I
+            care about clean code, good user experience, and shipping things
+            that solve real problems.
+          </p>
+          <p>
+            When I'm not coding, I'm usually learning something new, reading, or
+            tinkering with side projects.
+          </p>
+        </div>
+        <div class="skills">
+          <h3>Skills</h3>
+          <ul class="skill-tags">
+            <li>JavaScript</li>
+            <li>TypeScript</li>
+            <li>React</li>
+            <li>Node.js</li>
+            <li>Python</li>
+            <li>HTML &amp; CSS</li>
+            <li>SQL</li>
+            <li>Git</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section container contact">
+      <div class="section-head">
+        <h2>Get in Touch</h2>
+        <p>Have a project in mind or just want to say hello? Reach out.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:josephkabeya132@gmail.com" class="btn btn-primary">Email Me</a>
+        <a href="https://github.com/tdkasala" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+        <a href="#" class="btn btn-ghost" data-placeholder="LinkedIn">LinkedIn</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Joseph Kabeya. Built with HTML, CSS &amp; JavaScript.</p>
+    </div>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
