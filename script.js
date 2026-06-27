@@ -69,9 +69,9 @@
     if (themeToggle) themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
   }
 
+  // Default to light mode; respect the user's saved choice if they've toggled.
   const stored = localStorage.getItem("theme");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  applyTheme(stored || (prefersDark ? "dark" : "light"));
+  applyTheme(stored || "light");
 
   if (themeToggle) {
     themeToggle.addEventListener("click", () => {
