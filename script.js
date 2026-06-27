@@ -5,6 +5,10 @@
 (function () {
   "use strict";
 
+  // ---- Always open at the top (don't restore previous scroll position) -
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.addEventListener("load", () => window.scrollTo(0, 0));
+
   // ---- Render project cards --------------------------------------------
   const grid = document.getElementById("projects-grid");
 
