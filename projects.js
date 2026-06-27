@@ -18,10 +18,10 @@ const projects = [
   {
     title: "School Connect Africa",
     description:
-      "A web platform connecting schools, students, and educational resources across Africa. Live and serving real users.",
+      "A multi-tenant SaaS school management platform (and PWA) connecting schools across Africa, with dedicated access for admins, teachers, and parents.",
     icon: "🎓",
     category: "web",
-    tags: ["Web Platform", "Education", "Africa"],
+    tags: ["SaaS", "Multi-tenant", "PWA", "Education"],
     demo: "https://www.schoolconnectafrica.co.za",
     source: "",
     image: "assets/shots/school-connect.png",
@@ -29,10 +29,10 @@ const projects = [
   {
     title: "Property Connect",
     description:
-      "Manage properties, tenants, and rent collection from one intelligent platform — leases, maintenance requests, and reporting in a single cloud-based solution.",
+      "A multi-tenant SaaS platform (and PWA) to manage properties, tenants, and rent collection from one place — leases, maintenance requests, and reporting in a single cloud-based solution.",
     icon: "🏠",
     category: "web",
-    tags: ["Property Management", "SaaS", "Vercel"],
+    tags: ["SaaS", "Multi-tenant", "PWA", "Property Management"],
     demo: "https://property-connect101.vercel.app/",
     source: "",
     image: "assets/shots/property-connect.png",
@@ -40,10 +40,10 @@ const projects = [
   {
     title: "Hospital Connect",
     description:
-      "A multi-tenant SaaS hospital management platform for hospitals, clinics, and medical centers in the DRC. An all-in-one solution for managing patients, care, pharmacy, laboratory, and billing.",
+      "A multi-tenant SaaS hospital management platform (and PWA) for hospitals, clinics, and medical centers in the DRC. An all-in-one solution for managing patients, care, pharmacy, laboratory, and billing.",
     icon: "🏥",
     category: "web",
-    tags: ["Healthcare", "SaaS", "Multi-tenant"],
+    tags: ["SaaS", "Multi-tenant", "PWA", "Healthcare"],
     demo: "https://hopital-connect.vercel.app/",
     source: "",
     image: "assets/shots/hospital-connect.png",
