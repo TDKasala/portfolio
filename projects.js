@@ -12,6 +12,16 @@
 
 const projects = [
   {
+    title: "School Connect Africa",
+    description:
+      "A web platform connecting schools, students, and educational resources across Africa. Live and serving real users.",
+    icon: "🎓",
+    category: "web",
+    tags: ["Web Platform", "Education", "Africa"],
+    demo: "https://www.schoolconnectafrica.co.za",
+    source: "",
+  },
+  {
     title: "Personal Portfolio",
     description:
       "This very website — a fast, responsive portfolio built with plain HTML, CSS, and JavaScript. Dark mode and filtering included.",
