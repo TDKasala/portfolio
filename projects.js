@@ -24,6 +24,9 @@ const projects = [
     tags: ["Web Platform", "Education", "Africa"],
     demo: "https://www.schoolconnectafrica.co.za",
     source: "",
+    // Branded preview tile — replace with a real screenshot of the live
+    // site (e.g. assets/shots/school-connect.png) when you have one.
+    image: "assets/shots/school-connect.svg",
   },
   {
     title: "Personal Portfolio",
