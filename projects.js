@@ -38,6 +38,17 @@ const projects = [
     image: "assets/shots/property-connect.png",
   },
   {
+    title: "Hospital Connect",
+    description:
+      "A multi-tenant SaaS hospital management platform for hospitals, clinics, and medical centers in the DRC. An all-in-one solution for managing patients, care, pharmacy, laboratory, and billing.",
+    icon: "🏥",
+    category: "web",
+    tags: ["Healthcare", "SaaS", "Multi-tenant"],
+    demo: "https://hopital-connect.vercel.app/",
+    source: "",
+    image: "assets/shots/hospital-connect.png",
+  },
+  {
     title: "Personal Portfolio",
     description:
       "This very website — a fast, responsive portfolio built with plain HTML, CSS, and JavaScript. Dark mode and filtering included.",
