@@ -27,6 +27,16 @@ const projects = [
     image: "assets/shots/school-connect.png",
   },
   {
+    title: "Property Connect",
+    description:
+      "A property listing platform where users can browse, search, and connect over real estate. Built and deployed on Vercel.",
+    icon: "🏠",
+    category: "web",
+    tags: ["Web App", "Real Estate", "Vercel"],
+    demo: "https://property-connect101.vercel.app/",
+    source: "",
+  },
+  {
     title: "Personal Portfolio",
     description:
       "This very website — a fast, responsive portfolio built with plain HTML, CSS, and JavaScript. Dark mode and filtering included.",
