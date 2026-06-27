@@ -20,9 +20,12 @@
     const links = [buildLink(p.demo, "Live"), buildLink(p.source, "Code")]
       .filter(Boolean)
       .join("");
+    const thumb = p.image
+      ? `<div class="card-thumb has-img"><img src="${p.image}" alt="${p.title} screenshot" loading="lazy" /></div>`
+      : `<div class="card-thumb">${p.icon}</div>`;
     return `
       <article class="card" data-category="${p.category}">
-        <div class="card-thumb">${p.icon}</div>
+        ${thumb}
         <div class="card-body">
           <h3>${p.title}</h3>
           <p>${p.description}</p>

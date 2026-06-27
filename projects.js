@@ -8,6 +8,8 @@
 //   tags        (array)   — tech/keywords shown as pills
 //   demo        (string)  — live URL (use "" to hide the link)
 //   source      (string)  — source code URL (use "" to hide the link)
+//   image       (string)  — optional screenshot path; falls back to the
+//                           emoji tile when omitted
 // ===========================================================================
 
 const REPO = "https://github.com/TDKasala/portfolio";
@@ -42,6 +44,7 @@ const projects = [
     tags: ["JavaScript", "LocalStorage", "UI"],
     demo: "projects/task-manager/index.html",
     source: REPO + "/tree/main/projects/task-manager",
+    image: "assets/shots/task-manager.png",
   },
   {
     title: "Weather Dashboard",
@@ -52,6 +55,7 @@ const projects = [
     tags: ["API", "Open-Meteo", "JavaScript"],
     demo: "projects/weather/index.html",
     source: REPO + "/tree/main/projects/weather",
+    image: "assets/shots/weather.png",
   },
   {
     title: "Expense Tracker",
@@ -62,6 +66,7 @@ const projects = [
     tags: ["JavaScript", "Charts", "LocalStorage"],
     demo: "projects/expense-tracker/index.html",
     source: REPO + "/tree/main/projects/expense-tracker",
+    image: "assets/shots/expense-tracker.png",
   },
   {
     title: "Markdown Notes",
@@ -72,5 +77,6 @@ const projects = [
     tags: ["JavaScript", "Markdown"],
     demo: "projects/markdown-notes/index.html",
     source: REPO + "/tree/main/projects/markdown-notes",
+    image: "assets/shots/markdown-notes.png",
   },
 ];
