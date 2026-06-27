@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker — Denis Kasala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../app.css" />
+  <style>
+    .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .summary .card { text-align: center; }
+    .summary .k { font-size: 0.8rem; color: var(--text-soft); }
+    .summary .v { font-size: 1.5rem; font-weight: 800; }
+    .add-form { display: grid; grid-template-columns: 1fr 130px 150px auto; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .bars { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .bar-row { display: grid; grid-template-columns: 90px 1fr 70px; gap: 0.6rem; align-items: center; font-size: 0.9rem; }
+    .bar-track { background: var(--bg-soft); border-radius: 6px; height: 18px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 6px; transition: width 0.4s; }
+    .bar-amt { text-align: right; color: var(--text-soft); }
+    .item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.5rem; background: var(--surface); }
+    .item .desc { flex: 1; }
+    .item .cat { font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--bg-soft); color: var(--text-soft); }
+    .item .amt { font-weight: 700; }
+    h2 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-soft); font-weight: 600; }
+    @media (max-width: 640px) { .add-form { grid-template-columns: 1fr; } .summary { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <h1>💸 Expense Tracker</h1>
+      <a class="back" href="../../index.html#projects">← Back to portfolio</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="summary">
+      <div class="card"><div class="k">Total spent</div><div class="v" id="total">$0</div></div>
+      <div class="card"><div class="k">Entries</div><div class="v" id="num">0</div></div>
+      <div class="card"><div class="k">Avg / entry</div><div class="v" id="avg">$0</div></div>
+    </div>
+
+    <form class="add-form" id="add-form">
+      <input class="field" id="e-desc" placeholder="Description" required />
+      <input class="field" id="e-amt" type="number" min="0" step="0.01" placeholder="Amount" required />
+      <select class="field" id="e-cat">
+        <option>Food</option><option>Transport</option><option>Bills</option>
+        <option>Shopping</option><option>Fun</option><option>Other</option>
+      </select>
+      <button class="btn" type="submit">Add</button>
+    </form>
+
+    <h2>By category</h2>
+    <div class="bars" id="bars"></div>
+
+    <h2>History</h2>
+    <div id="list"></div>
+  </main>
+
+  <script>
+    const KEY = "dk_expenses";
+    let items = JSON.parse(localStorage.getItem(KEY) || "[]");
+    const fmt = (n) => "$" + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const save = () => localStorage.setItem(KEY, JSON.stringify(items));
+
+    function render() {
+      const total = items.reduce((s, i) => s + i.amt, 0);
+      document.getElementById("total").textContent = fmt(total);
+      document.getElementById("num").textContent = items.length;
+      document.getElementById("avg").textContent = fmt(items.length ? total / items.length : 0);
+
+      // category bars
+      const byCat = {};
+      items.forEach((i) => (byCat[i.cat] = (byCat[i.cat] || 0) + i.amt));
+      const max = Math.max(1, ...Object.values(byCat));
+      const bars = document.getElementById("bars");
+      const cats = Object.keys(byCat).sort((a, b) => byCat[b] - byCat[a]);
+      bars.innerHTML = cats.length
+        ? cats
+            .map(
+              (c) => `<div class="bar-row"><span>${c}</span>
+              <div class="bar-track"><div class="bar-fill" style="width:${(byCat[c] / max) * 100}%"></div></div>
+              <span class="bar-amt">${fmt(byCat[c])}</span></div>`
+            )
+            .join("")
+        : '<p class="muted">No data yet.</p>';
+
+      // history
+      const list = document.getElementById("list");
+      list.innerHTML = items.length
+        ? items
+            .map(
+              (i) => `<div class="item" data-id="${i.id}">
+              <span class="desc">${esc(i.desc)}</span>
+              <span class="cat">${i.cat}</span>
+              <span class="amt">${fmt(i.amt)}</span>
+              <button class="btn-icon" title="Delete">🗑️</button></div>`
+            )
+            .join("")
+        : '<p class="empty">No expenses logged yet. Add one above! 💰</p>';
+    }
+
+    document.getElementById("add-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const desc = document.getElementById("e-desc").value.trim();
+      const amt = parseFloat(document.getElementById("e-amt").value);
+      if (!desc || isNaN(amt) || amt < 0) return;
+      items.unshift({ id: Date.now(), desc, amt, cat: document.getElementById("e-cat").value });
+      save();
+      render();
+      e.target.reset();
+    });
+
+    document.getElementById("list").addEventListener("click", (e) => {
+      if (!e.target.classList.contains("btn-icon")) return;
+      const id = Number(e.target.closest(".item").dataset.id);
+      items = items.filter((i) => i.id !== id);
+      save();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

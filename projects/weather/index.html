@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Dashboard — Denis Kasala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../app.css" />
+  <style>
+    .search { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .current { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; }
+    .current .icon { font-size: 3.5rem; }
+    .current .temp { font-size: 3rem; font-weight: 800; line-height: 1; }
+    .current .desc { color: var(--text-soft); }
+    .current .place { font-size: 1.1rem; font-weight: 600; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem; }
+    .stat .k { font-size: 0.8rem; color: var(--text-soft); }
+    .stat .v { font-size: 1.2rem; font-weight: 700; }
+    .forecast { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 0.6rem; }
+    .day { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem; text-align: center; }
+    .day .d { font-size: 0.8rem; color: var(--text-soft); }
+    .day .i { font-size: 1.6rem; margin: 0.2rem 0; }
+    .day .t { font-size: 0.9rem; font-weight: 600; }
+    .day .t span { color: var(--text-soft); font-weight: 400; }
+    .status { text-align: center; color: var(--text-soft); padding: 1rem 0; }
+    .status.error { color: var(--danger); }
+    h2 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-soft); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <h1>⛅ Weather Dashboard</h1>
+      <a class="back" href="../../index.html#projects">← Back to portfolio</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <form class="search" id="search">
+      <input class="field" id="city" placeholder="Enter a city (e.g. Cape Town)" required />
+      <button class="btn" type="submit">Search</button>
+    </form>
+
+    <div class="status" id="status">Search for a city to see the forecast.</div>
+
+    <div id="result" hidden>
+      <div class="current">
+        <div class="icon" id="cur-icon"></div>
+        <div>
+          <div class="place" id="cur-place"></div>
+          <div class="temp" id="cur-temp"></div>
+          <div class="desc" id="cur-desc"></div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Feels like</div><div class="v" id="s-feels"></div></div>
+        <div class="stat"><div class="k">Humidity</div><div class="v" id="s-hum"></div></div>
+        <div class="stat"><div class="k">Wind</div><div class="v" id="s-wind"></div></div>
+        <div class="stat"><div class="k">Precip.</div><div class="v" id="s-precip"></div></div>
+      </div>
+
+      <h2>7-day forecast</h2>
+      <div class="forecast" id="forecast"></div>
+    </div>
+  </main>
+
+  <script>
+    // WMO weather codes → emoji + label
+    const WMO = {
+      0: ["☀️", "Clear sky"], 1: ["🌤️", "Mainly clear"], 2: ["⛅", "Partly cloudy"],
+      3: ["☁️", "Overcast"], 45: ["🌫️", "Fog"], 48: ["🌫️", "Rime fog"],
+      51: ["🌦️", "Light drizzle"], 53: ["🌦️", "Drizzle"], 55: ["🌧️", "Dense drizzle"],
+      61: ["🌦️", "Light rain"], 63: ["🌧️", "Rain"], 65: ["🌧️", "Heavy rain"],
+      66: ["🌨️", "Freezing rain"], 67: ["🌨️", "Freezing rain"],
+      71: ["🌨️", "Light snow"], 73: ["❄️", "Snow"], 75: ["❄️", "Heavy snow"],
+      77: ["🌨️", "Snow grains"], 80: ["🌦️", "Rain showers"], 81: ["🌧️", "Rain showers"],
+      82: ["⛈️", "Violent showers"], 85: ["🌨️", "Snow showers"], 86: ["❄️", "Snow showers"],
+      95: ["⛈️", "Thunderstorm"], 96: ["⛈️", "Thunderstorm + hail"], 99: ["⛈️", "Thunderstorm + hail"],
+    };
+    const code = (c) => WMO[c] || ["🌡️", "—"];
+
+    const statusEl = document.getElementById("status");
+    const result = document.getElementById("result");
+
+    function setStatus(msg, isError) {
+      statusEl.textContent = msg;
+      statusEl.classList.toggle("error", !!isError);
+      statusEl.hidden = !msg;
+    }
+
+    async function getWeather(city) {
+      setStatus("Loading…", false);
+      result.hidden = true;
+      try {
+        const geo = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`
+        ).then((r) => r.json());
+        if (!geo.results || !geo.results.length) {
+          setStatus(`Couldn't find "${city}". Try another spelling.`, true);
+          return;
+        }
+        const { latitude, longitude, name, country } = geo.results[0];
+        const w = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
+            `&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m` +
+            `&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`
+        ).then((r) => r.json());
+
+        const cur = w.current;
+        const [ci, cd] = code(cur.weather_code);
+        document.getElementById("cur-icon").textContent = ci;
+        document.getElementById("cur-place").textContent = `${name}, ${country}`;
+        document.getElementById("cur-temp").textContent = `${Math.round(cur.temperature_2m)}°C`;
+        document.getElementById("cur-desc").textContent = cd;
+        document.getElementById("s-feels").textContent = `${Math.round(cur.apparent_temperature)}°C`;
+        document.getElementById("s-hum").textContent = `${cur.relative_humidity_2m}%`;
+        document.getElementById("s-wind").textContent = `${Math.round(cur.wind_speed_10m)} km/h`;
+        document.getElementById("s-precip").textContent = `${cur.precipitation} mm`;
+
+        const d = w.daily;
+        document.getElementById("forecast").innerHTML = d.time
+          .map((t, i) => {
+            const [ic] = code(d.weather_code[i]);
+            const day = new Date(t).toLocaleDateString(undefined, { weekday: "short" });
+            return `<div class="day"><div class="d">${day}</div><div class="i">${ic}</div>
+              <div class="t">${Math.round(d.temperature_2m_max[i])}° <span>${Math.round(d.temperature_2m_min[i])}°</span></div></div>`;
+          })
+          .join("");
+
+        setStatus("", false);
+        result.hidden = false;
+      } catch (err) {
+        setStatus("Something went wrong fetching the weather. Try again.", true);
+      }
+    }
+
+    document.getElementById("search").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const city = document.getElementById("city").value.trim();
+      if (city) getWeather(city);
+    });
+
+    // Default city on load
+    getWeather("Cape Town");
+  </script>
+</body>
+</html>

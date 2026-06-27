@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager — Denis Kasala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../app.css" />
+  <style>
+    .add-form { display: grid; grid-template-columns: 1fr auto auto auto; gap: 0.6rem; margin-bottom: 1.25rem; }
+    .filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .chip { padding: 0.35rem 0.85rem; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-soft); cursor: pointer; font-size: 0.85rem; }
+    .chip.active { background: var(--accent); color: #0d1017; border-color: var(--accent); }
+    .task { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.6rem; background: var(--surface); }
+    .task.done .title { text-decoration: line-through; color: var(--text-soft); }
+    .task input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .task .title { flex: 1; }
+    .task .meta { font-size: 0.78rem; color: var(--text-soft); display: flex; gap: 0.5rem; align-items: center; }
+    .cat { font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--bg-soft); }
+    .due.overdue { color: var(--danger); }
+    @media (max-width: 600px) { .add-form { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <h1>✅ Task Manager</h1>
+      <a class="back" href="../../index.html#projects">← Back to portfolio</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <form class="add-form" id="add-form">
+      <input class="field" id="task-input" placeholder="What needs doing?" required />
+      <select class="field" id="task-cat">
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Urgent">Urgent</option>
+      </select>
+      <input class="field" id="task-due" type="date" />
+      <button class="btn" type="submit">Add</button>
+    </form>
+
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="active">Active</button>
+      <button class="chip" data-filter="done">Done</button>
+    </div>
+
+    <div id="list"></div>
+    <p class="muted" id="count" style="margin-top:1rem;"></p>
+  </main>
+
+  <script>
+    const KEY = "dk_tasks";
+    let tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+    let filter = "all";
+
+    const list = document.getElementById("list");
+    const count = document.getElementById("count");
+
+    const save = () => localStorage.setItem(KEY, JSON.stringify(tasks));
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+    function render() {
+      const today = new Date().toISOString().slice(0, 10);
+      const shown = tasks.filter((t) =>
+        filter === "all" ? true : filter === "done" ? t.done : !t.done
+      );
+      if (!shown.length) {
+        list.innerHTML = '<p class="empty">No tasks here. Add one above! 🎯</p>';
+      } else {
+        list.innerHTML = shown
+          .map((t) => {
+            const overdue = t.due && !t.done && t.due < today;
+            const due = t.due ? `<span class="due ${overdue ? "overdue" : ""}">📅 ${t.due}</span>` : "";
+            return `
+            <div class="task ${t.done ? "done" : ""}" data-id="${t.id}">
+              <input type="checkbox" ${t.done ? "checked" : ""} />
+              <div class="title">${esc(t.title)}</div>
+              <div class="meta"><span class="cat">${t.cat}</span>${due}</div>
+              <button class="btn-icon" title="Delete">🗑️</button>
+            </div>`;
+          })
+          .join("");
+      }
+      const left = tasks.filter((t) => !t.done).length;
+      count.textContent = `${left} active · ${tasks.length} total`;
+    }
+
+    document.getElementById("add-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const title = document.getElementById("task-input").value.trim();
+      if (!title) return;
+      tasks.unshift({
+        id: Date.now(),
+        title,
+        cat: document.getElementById("task-cat").value,
+        due: document.getElementById("task-due").value,
+        done: false,
+      });
+      save();
+      render();
+      e.target.reset();
+    });
+
+    list.addEventListener("click", (e) => {
+      const row = e.target.closest(".task");
+      if (!row) return;
+      const id = Number(row.dataset.id);
+      if (e.target.type === "checkbox") {
+        const t = tasks.find((x) => x.id === id);
+        t.done = !t.done;
+      } else if (e.target.classList.contains("btn-icon")) {
+        tasks = tasks.filter((x) => x.id !== id);
+      } else return;
+      save();
+      render();
+    });
+
+    document.getElementById("filters").addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      filter = chip.dataset.filter;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

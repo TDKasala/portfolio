@@ -10,6 +10,8 @@
 //   source      (string)  — source code URL (use "" to hide the link)
 // ===========================================================================
 
+const REPO = "https://github.com/TDKasala/portfolio";
+
 const projects = [
   {
     title: "School Connect Africa",
@@ -29,56 +31,46 @@ const projects = [
     category: "web",
     tags: ["HTML", "CSS", "JavaScript"],
     demo: "#",
-    source: "https://github.com/tdkasala/portfolio",
+    source: REPO,
   },
   {
-    title: "Task Manager App",
+    title: "Task Manager",
     description:
-      "A clean to-do and task tracking app with categories, due dates, and local persistence. Helps keep daily work organized.",
+      "A clean to-do app with categories, due dates, active/done filtering, and persistence — your tasks are saved in the browser.",
     icon: "✅",
     category: "web",
-    tags: ["React", "LocalStorage", "UI"],
-    demo: "#",
-    source: "#",
+    tags: ["JavaScript", "LocalStorage", "UI"],
+    demo: "projects/task-manager/index.html",
+    source: REPO + "/tree/main/projects/task-manager",
   },
   {
     title: "Weather Dashboard",
     description:
-      "Real-time weather dashboard that pulls forecasts from a public API and visualizes conditions for any city.",
+      "Search any city for live current conditions and a 7-day forecast. Powered by the free Open-Meteo API — no key required.",
     icon: "⛅",
     category: "web",
-    tags: ["API", "Charts", "JavaScript"],
-    demo: "#",
-    source: "#",
+    tags: ["API", "Open-Meteo", "JavaScript"],
+    demo: "projects/weather/index.html",
+    source: REPO + "/tree/main/projects/weather",
   },
   {
     title: "Expense Tracker",
     description:
-      "Mobile-friendly app to log expenses, categorize spending, and view monthly summaries with simple charts.",
+      "Log expenses, categorize spending, and see live totals plus a per-category breakdown chart. All data stays in your browser.",
     icon: "💸",
-    category: "mobile",
-    tags: ["React Native", "Charts"],
-    demo: "#",
-    source: "#",
-  },
-  {
-    title: "CLI File Organizer",
-    description:
-      "A command-line tool that automatically sorts files in a directory into folders by type, date, or custom rules.",
-    icon: "🗂️",
-    category: "tool",
-    tags: ["Python", "CLI", "Automation"],
-    demo: "",
-    source: "#",
+    category: "web",
+    tags: ["JavaScript", "Charts", "LocalStorage"],
+    demo: "projects/expense-tracker/index.html",
+    source: REPO + "/tree/main/projects/expense-tracker",
   },
   {
     title: "Markdown Notes",
     description:
-      "A distraction-free markdown editor with live preview, export, and offline support for quick note-taking.",
+      "A distraction-free markdown editor with live preview, auto-save, and .md export — built with a dependency-free renderer.",
     icon: "📝",
     category: "tool",
     tags: ["JavaScript", "Markdown"],
-    demo: "#",
-    source: "#",
+    demo: "projects/markdown-notes/index.html",
+    source: REPO + "/tree/main/projects/markdown-notes",
   },
 ];

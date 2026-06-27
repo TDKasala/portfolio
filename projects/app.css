@@ -1,0 +1,107 @@
+/* Shared styles for portfolio demo apps */
+:root {
+  --bg: #0d1017;
+  --bg-soft: #141823;
+  --surface: #161b26;
+  --border: #232a39;
+  --text: #e8ebf2;
+  --text-soft: #9aa3b4;
+  --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --danger: #f87171;
+  --ok: #34d399;
+  --radius: 12px;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.app-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+.app-header .wrap {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.app-header h1 { font-size: 1.25rem; font-weight: 700; }
+.app-header .back {
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.app-header .back:hover { color: var(--accent); }
+
+.wrap { max-width: 800px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.field {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  color: var(--text);
+  width: 100%;
+}
+.field:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.field::placeholder { color: var(--text-soft); }
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0.65rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  background: var(--accent);
+  color: #0d1017;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn:active { transform: translateY(1px); }
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-soft);
+  font-size: 1rem;
+  padding: 0.25rem;
+}
+.btn-icon:hover { color: var(--danger); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+
+.muted { color: var(--text-soft); }
+.row { display: flex; gap: 0.6rem; }
+.empty { text-align: center; color: var(--text-soft); padding: 2rem 0; }

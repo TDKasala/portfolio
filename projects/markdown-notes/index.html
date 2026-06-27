@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markdown Notes — Denis Kasala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../app.css" />
+  <style>
+    .toolbar { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+    .toolbar .spacer { flex: 1; }
+    .editor { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .pane { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); min-height: 60vh; }
+    textarea#md { width: 100%; height: 100%; min-height: 60vh; resize: vertical; border: none; background: transparent; color: var(--text); padding: 1rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.95rem; line-height: 1.6; }
+    textarea#md:focus { outline: none; }
+    .preview { padding: 1rem 1.25rem; overflow-wrap: break-word; }
+    .preview h1, .preview h2, .preview h3 { margin: 0.8rem 0 0.4rem; line-height: 1.3; }
+    .preview h1 { font-size: 1.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    .preview h2 { font-size: 1.3rem; }
+    .preview h3 { font-size: 1.1rem; }
+    .preview p { margin: 0.5rem 0; }
+    .preview ul, .preview ol { margin: 0.5rem 0 0.5rem 1.5rem; }
+    .preview code { background: var(--bg-soft); padding: 0.1rem 0.35rem; border-radius: 5px; font-family: ui-monospace, monospace; font-size: 0.88em; }
+    .preview pre { background: var(--bg-soft); padding: 0.8rem 1rem; border-radius: 8px; overflow-x: auto; margin: 0.6rem 0; }
+    .preview pre code { background: none; padding: 0; }
+    .preview a { color: var(--accent); }
+    .preview blockquote { border-left: 3px solid var(--accent); padding-left: 0.9rem; color: var(--text-soft); margin: 0.6rem 0; }
+    .preview hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+    .saved { font-size: 0.82rem; color: var(--ok); }
+    @media (max-width: 760px) { .editor { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <h1>📝 Markdown Notes</h1>
+      <a class="back" href="../../index.html#projects">← Back to portfolio</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <button class="btn-ghost btn" id="download">⬇ Download .md</button>
+      <button class="btn-ghost btn" id="clear">Clear</button>
+      <span class="spacer"></span>
+      <span class="saved" id="saved"></span>
+    </div>
+
+    <div class="editor">
+      <div class="pane"><textarea id="md" spellcheck="false" placeholder="# Start writing markdown…"></textarea></div>
+      <div class="pane preview" id="preview"></div>
+    </div>
+  </main>
+
+  <script>
+    // Minimal, dependency-free markdown → HTML renderer (common subset).
+    function escapeHtml(s) {
+      return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    }
+    function inline(s) {
+      return s
+        .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>")
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    }
+    function render(src) {
+      const lines = escapeHtml(src).split("\n");
+      let html = "", inUl = false, inOl = false, inCode = false;
+      const closeLists = () => {
+        if (inUl) { html += "</ul>"; inUl = false; }
+        if (inOl) { html += "</ol>"; inOl = false; }
+      };
+      for (let raw of lines) {
+        if (/^```/.test(raw)) {
+          if (!inCode) { closeLists(); html += "<pre><code>"; inCode = true; }
+          else { html += "</code></pre>"; inCode = false; }
+          continue;
+        }
+        if (inCode) { html += raw + "\n"; continue; }
+        if (/^\s*$/.test(raw)) { closeLists(); continue; }
+        let m;
+        if ((m = raw.match(/^(#{1,3})\s+(.*)/))) {
+          closeLists();
+          html += `<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`;
+        } else if (/^\s*>\s?/.test(raw)) {
+          closeLists();
+          html += `<blockquote>${inline(raw.replace(/^\s*>\s?/, ""))}</blockquote>`;
+        } else if (/^\s*([-*])\s+/.test(raw)) {
+          if (!inUl) { closeLists(); html += "<ul>"; inUl = true; }
+          html += `<li>${inline(raw.replace(/^\s*([-*])\s+/, ""))}</li>`;
+        } else if (/^\s*\d+\.\s+/.test(raw)) {
+          if (!inOl) { closeLists(); html += "<ol>"; inOl = true; }
+          html += `<li>${inline(raw.replace(/^\s*\d+\.\s+/, ""))}</li>`;
+        } else if (/^\s*---\s*$/.test(raw)) {
+          closeLists();
+          html += "<hr>";
+        } else {
+          closeLists();
+          html += `<p>${inline(raw)}</p>`;
+        }
+      }
+      if (inCode) html += "</code></pre>";
+      closeLists();
+      return html;
+    }
+
+    const KEY = "dk_notes";
+    const md = document.getElementById("md");
+    const preview = document.getElementById("preview");
+    const saved = document.getElementById("saved");
+
+    const SAMPLE = `# Welcome to Markdown Notes
+
+Type on the **left**, see the preview on the **right**.
+
+## Features
+- *Live* preview as you type
+- Auto-saves to your browser
+- Export to a \`.md\` file
+
+> Everything stays on your device.
+
+\`\`\`
+const hello = "world";
+\`\`\`
+
+[Back to portfolio](../../index.html)
+`;
+
+    md.value = localStorage.getItem(KEY) ?? SAMPLE;
+
+    let timer;
+    function update() {
+      preview.innerHTML = render(md.value);
+      saved.textContent = "Saving…";
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        localStorage.setItem(KEY, md.value);
+        saved.textContent = "✓ Saved";
+      }, 400);
+    }
+    md.addEventListener("input", update);
+
+    document.getElementById("download").addEventListener("click", () => {
+      const blob = new Blob([md.value], { type: "text/markdown" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "notes.md";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById("clear").addEventListener("click", () => {
+      if (confirm("Clear all notes?")) { md.value = ""; update(); }
+    });
+
+    update();
+  </script>
+</body>
+</html>
