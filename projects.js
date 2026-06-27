@@ -29,12 +29,13 @@ const projects = [
   {
     title: "Property Connect",
     description:
-      "A property listing platform where users can browse, search, and connect over real estate. Built and deployed on Vercel.",
+      "Manage properties, tenants, and rent collection from one intelligent platform — leases, maintenance requests, and reporting in a single cloud-based solution.",
     icon: "🏠",
     category: "web",
-    tags: ["Web App", "Real Estate", "Vercel"],
+    tags: ["Property Management", "SaaS", "Vercel"],
     demo: "https://property-connect101.vercel.app/",
     source: "",
+    image: "assets/shots/property-connect.png",
   },
   {
     title: "Personal Portfolio",
