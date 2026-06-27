@@ -49,6 +49,17 @@ const projects = [
     image: "assets/shots/hospital-connect.png",
   },
   {
+    title: "LDK Core",
+    description:
+      "An all-in-one multi-tenant SaaS PWA for business operations — finance, HR, payroll, accounting, and point of sale (POS) in a single platform.",
+    icon: "🧩",
+    category: "web",
+    tags: ["SaaS", "Multi-tenant", "PWA", "ERP"],
+    demo: "https://ldk-core-1.vercel.app/",
+    source: "",
+    image: "assets/shots/ldk-core.jpg",
+  },
+  {
     title: "Personal Portfolio",
     description:
       "This very website — a fast, responsive portfolio built with plain HTML, CSS, and JavaScript. Dark mode and filtering included.",
